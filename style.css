@@ -1,3 +1,34 @@
-#root {
-  color: red;
+body, #root {
+  background-color: rgb(243, 236, 236);
+}
+#root{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
+}
+.episodeContainer h2,
+.episodeContainer img,
+.episodeContainer p{
+  padding: 30px;
+}
+.episodeContainer{
+  background-color: white;
+  border-radius: 15px;
+  width: 400px;
+  /*padding: 50px;*/
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+.episodeContainer p{
+  text-align: justify;
+}
+.episodeContainer h2{
+  border: 2px solid black;
+  border-radius: 15px;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
 }
