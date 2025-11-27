@@ -1,5 +1,5 @@
 //You can edit ALL of the code here
-let allEpisodes = getAllEpisodes();
+let allEpisodes = getAllEpisodes(); // declared it here to use the variable globally
 
 function setup() {
 
@@ -11,30 +11,36 @@ function setup() {
     const searchWord = searchInput.value.toLowerCase(); // the user's input
     const filteredAllEpisodes = searchEpisodes(searchWord); // search on the episodes
 
+    // to show the number of episodes displayed
+    const numberOfEpiFound = document.getElementById("numberOfEpiFound");
+    numberOfEpiFound.innerHTML = `Displaying ${filteredAllEpisodes.length
+    }/${allEpisodes.length} Episodes`;
+    if ( searchWord.length == 0 )
+      numberOfEpiFound.innerHTML = ""; // don't display it when no input
+
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = ""; // remove everything inside div root to put the new content (the search result)
 
-    makePageForEpisodes(filteredAllEpisodes); // will display only matching episodes
+    // will display only matching episodes
+    makePageForEpisodes(filteredAllEpisodes);
   });
 }
 
 function searchEpisodes(searchInput) {
-    return allEpisodes.filter(episode => 
-    episode.name.toLowerCase().includes(searchInput)
-    ||
-    episode.summary.toLowerCase().includes(searchInput));
-  }
+  return allEpisodes.filter(episode => 
+  episode.name.toLowerCase().includes(searchInput)
+  ||
+  episode.summary.toLowerCase().includes(searchInput));
+}
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
   //rootElem.textContent = `Got ${episodeList.length} episode(s)`;
   for (let i = 0; i < episodeList.length; i++){
-      const episode = episodeList[i];
-      const div = createEpisodeContainer(episode);
-      rootElem.appendChild(div);
+    const episode = episodeList[i];
+    const div = createEpisodeContainer(episode);
+    rootElem.appendChild(div);
   }  
-
- 
 }
 
 function createEpisodeContainer(episode){
