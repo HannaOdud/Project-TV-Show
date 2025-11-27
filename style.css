@@ -33,6 +33,11 @@ body, #root {
   text-align: center;
 }
 
+.episodeContainer img {
+  width: 100%;
+  border-radius: 8px;
+}
+
 /* for the search bar */
 .topnav {
   overflow: hidden;
