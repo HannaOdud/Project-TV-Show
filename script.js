@@ -26,6 +26,7 @@ function createEpisodeContainer(episode){
   h2.textContent = episode.name + " - "+ code;
   const img = document.createElement("img");
   img.src = episode.image.medium;
+  img.alt = episode.name;
   const p = document.createElement("p");
   p.textContent = episode.summary;
   //joining append elements to container div
