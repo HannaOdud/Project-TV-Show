@@ -1,8 +1,29 @@
 //You can edit ALL of the code here
+let allEpisodes = getAllEpisodes();
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
+
   makePageForEpisodes(allEpisodes);
+
+  const searchInput = document.querySelector("#inputSearch");
+  searchInput.addEventListener("input", () => {
+    const searchWord = searchInput.value.toLowerCase();
+    allEpisodes = searchEpisodes(searchWord);
+
+    const rootElem = document.getElementById("root");
+    rootElem.innerHTML = "";
+    
+    console.log(allEpisodes);
+    makePageForEpisodes(allEpisodes);
+  });
 }
+
+function searchEpisodes(searchInput) {
+    return allEpisodes.filter(episode => 
+    episode.name.toLowerCase().includes(searchInput)
+    ||
+    episode.summary.toLowerCase().includes(searchInput));
+  }
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
@@ -30,7 +51,7 @@ function createEpisodeContainer(episode){
   img.alt = episode.name;
 
   const p = document.createElement("p");
-  p.textContent = episode.summary.replace(/<\/?p>/g, "");
+  p.textContent = episode.summary.replace(/<\/?p>/g, ""); // <p> and </p> removed from string
   
   //joining append elements to container div
   div.appendChild(h2);
