@@ -3,18 +3,18 @@ let allEpisodes = getAllEpisodes();
 
 function setup() {
 
+  // display all episodes for first time (default)
   makePageForEpisodes(allEpisodes);
 
   const searchInput = document.querySelector("#inputSearch");
   searchInput.addEventListener("input", () => {
-    const searchWord = searchInput.value.toLowerCase();
-    allEpisodes = searchEpisodes(searchWord);
+    const searchWord = searchInput.value.toLowerCase(); // the user's input
+    const filteredAllEpisodes = searchEpisodes(searchWord); // search on the episodes
 
     const rootElem = document.getElementById("root");
-    rootElem.innerHTML = "";
-    
-    console.log(allEpisodes);
-    makePageForEpisodes(allEpisodes);
+    rootElem.innerHTML = ""; // remove everything inside div root to put the new content (the search result)
+
+    makePageForEpisodes(filteredAllEpisodes); // will display only matching episodes
   });
 }
 
