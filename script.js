@@ -20,15 +20,18 @@ function createEpisodeContainer(episode){
   //const episode = getOneEpisode();
   const div = document.createElement("div");
   div.classList.add("episodeContainer");
+  
   const h2 = document.createElement("h2");
   const code = "S"+ String(episode.season).padStart(2,"0")+"E"+String(episode.number).padStart(2,"0");
+  h2.textContent = episode.name + " - " + code;
 
-  h2.textContent = episode.name + " - "+ code;
   const img = document.createElement("img");
   img.src = episode.image.medium;
   img.alt = episode.name;
+
   const p = document.createElement("p");
-  p.textContent = episode.summary;
+  p.innerHTML = episode.summary;
+
   //joining append elements to container div
   div.appendChild(h2);
   div.appendChild(img);
