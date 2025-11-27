@@ -30,8 +30,8 @@ function createEpisodeContainer(episode){
   img.alt = episode.name;
 
   const p = document.createElement("p");
-  p.innerHTML = episode.summary;
-
+  p.textContent = episode.summary.replace(/<\/?p>/g, "");
+  
   //joining append elements to container div
   div.appendChild(h2);
   div.appendChild(img);
