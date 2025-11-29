@@ -35,9 +35,10 @@ function setup() {
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = "";
 
-    const chosenEpisodeId = episodesDropDown.value;
+    const chosenEpisodeId = Number(episodesDropDown.value);
     const displayEpisode = allEpisodes.filter( ep => ep.id === chosenEpisodeId);
-
+    console.log(displayEpisode);
+    console.log(chosenEpisodeId)
     makePageForEpisodes(displayEpisode);
   });
 }
