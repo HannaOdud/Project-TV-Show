@@ -9,6 +9,10 @@ function setup() {
   const searchInput = document.querySelector("#inputSearch");
   const episodesDropDown = document.querySelector("#episodesDropDown");
 
+   for (const episode of allEpisodes) {
+    episodesDropDown.innerHTML += `<option value="${episode.id}" >${episode.name}</option>`;
+  }
+
   searchInput.addEventListener("input", () => {
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = ""; // remove everything inside div root to put the new content (the search result)
@@ -22,20 +26,17 @@ function setup() {
     }/${allEpisodes.length} Episodes`;
     if ( searchWord.length == 0 )
       numberOfEpiFound.innerHTML = ""; // don't display it when no input
+
     // will display only matching episodes
     makePageForEpisodes(filteredAllEpisodes);
   });
-
-  // all about the dropdown
-  for (const episode of allEpisodes) {
-    episodesDropDown.innerHTML += `<option value="${episode.name}" >${episode.name}</option>`;
-  }
+  
   episodesDropDown.addEventListener("change", () => {
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = "";
 
-    const chosenEpisode = episodesDropDown.value;
-    const displayEpisode = allEpisodes.filter( ep => ep.name === chosenEpisode);
+    const chosenEpisodeId = episodesDropDown.value;
+    const displayEpisode = allEpisodes.filter( ep => ep.id === chosenEpisodeId);
 
     makePageForEpisodes(displayEpisode);
   });
