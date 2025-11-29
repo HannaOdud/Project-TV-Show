@@ -63,10 +63,20 @@ body, #root {
 
 /* Style the search box inside the navigation bar */
 .topnav input[type=text] {
-  float: right;
+  float: left;
   padding: 6px;
   border: none;
   margin-top: 8px;
-  margin-right: 16px;
+  margin-left: 16px;
+  font-size: 17px;
+}
+
+/* Style the Dropdown inside the navigation bar */
+.topnav select {
+  float: left;
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  margin-left: 16px;
   font-size: 17px;
 }
