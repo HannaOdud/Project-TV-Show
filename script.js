@@ -1,8 +1,21 @@
 //You can edit ALL of the code here
-let allEpisodes = getAllEpisodes(); // declared it here to use the variable globally
+let allEpisodes = [];
 
-function setup() {
+async function getAllEpisodesFromApi() {
+  const api_url = `https://api.tvmaze.com/shows/82/episodes`;
+  let episodes = [];
+  try {
+    const response = await fetch(api_url);
+    const data = await response.json();
+    episodes = Array.from(data);
+    return episodes;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+async function setup() {
+  allEpisodes = await getAllEpisodesFromApi();
   // display all episodes for first time (default)
   makePageForEpisodes(allEpisodes);
 
@@ -23,10 +36,8 @@ function setup() {
     const filteredAllEpisodes = searchEpisodes(searchWord); // search on the episodes
     displayEpisodesNumber (filteredAllEpisodes, allEpisodes);
     if ( searchWord.length == 0 ){
-      displayEpisodesNumber (allEpisodes, allEpisodes);
+      displayEpisodesNumber(allEpisodes, allEpisodes);
     }
-
-
     // will display only matching episodes
     makePageForEpisodes(filteredAllEpisodes);
   });
