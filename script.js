@@ -12,20 +12,20 @@ function setup() {
    for (const episode of allEpisodes) {
     episodesDropDown.innerHTML += `<option value="${episode.id}" >${episode.name}</option>`;
   }
-
+  numberOfEpiFound.innerHTML = `Displaying ${allEpisodes.length}/${allEpisodes.length} Episodes`;//number of episodes have to be displayed even if input is empty. 
+  displayEpisodesNumber (allEpisodes, allEpisodes);
+  
   searchInput.addEventListener("input", () => {
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = ""; // remove everything inside div root to put the new content (the search result)
 
     const searchWord = searchInput.value.toLowerCase(); // the user's input
     const filteredAllEpisodes = searchEpisodes(searchWord); // search on the episodes
+    displayEpisodesNumber (filteredAllEpisodes, allEpisodes);
+    if ( searchWord.length == 0 ){
+      displayEpisodesNumber (allEpisodes, allEpisodes);
+    }
 
-    // to show the number of episodes displayed
-    const numberOfEpiFound = document.getElementById("numberOfEpiFound");
-    numberOfEpiFound.innerHTML = `Displaying ${filteredAllEpisodes.length
-    }/${allEpisodes.length} Episodes`;
-    if ( searchWord.length == 0 )
-      numberOfEpiFound.innerHTML = ""; // don't display it when no input
 
     // will display only matching episodes
     makePageForEpisodes(filteredAllEpisodes);
@@ -34,13 +34,22 @@ function setup() {
   episodesDropDown.addEventListener("change", () => {
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = "";
-
-    const chosenEpisodeId = Number(episodesDropDown.value);
-    const displayEpisode = allEpisodes.filter( ep => ep.id === chosenEpisodeId);
-    console.log(displayEpisode);
-    console.log(chosenEpisodeId)
-    makePageForEpisodes(displayEpisode);
+    if (episodesDropDown.value == "all"){
+      makePageForEpisodes(allEpisodes);
+      displayEpisodesNumber (allEpisodes, allEpisodes);
+    }
+    else{
+      const chosenEpisodeId = Number(episodesDropDown.value);
+      const displayEpisode = allEpisodes.filter( ep => ep.id === chosenEpisodeId);
+      makePageForEpisodes(displayEpisode);
+      displayEpisodesNumber (displayEpisode, allEpisodes);
+    }
   });
+}
+function displayEpisodesNumber(filteredAllEpisodes, allEpisodes){
+  // to show the number of episodes displayed
+  const numberOfEpiFound = document.getElementById("numberOfEpiFound");
+  numberOfEpiFound.innerHTML = `Displaying ${filteredAllEpisodes.length}/${allEpisodes.length} Episodes`;
 }
 
 function searchEpisodes(searchInput) {
