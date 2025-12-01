@@ -9,13 +9,22 @@
   </head>
 
   <body>
+    
+    <div class="topnav">
+      <a class="active" href="#home">Home</a>
+      <select id="episodesDropDown">
+        <option value="all">-- SELECT ALL --</option>
+      </select>
+      <input id="inputSearch" type="text" placeholder="Search..">
+    </div>
+    <p id="numberOfEpiFound"></p>
     <div id="root">
     </div>
 
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <script src="episodes.js"></script>
+    <script src="episodes.js" defer></script>
 
     <!-- Loads YOUR javascript code -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

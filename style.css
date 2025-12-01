@@ -32,3 +32,51 @@ body, #root {
   width: 100%;
   text-align: center;
 }
+
+.episodeContainer img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* for the search bar */
+.topnav {
+  overflow: hidden;
+  background-color: #6b6b6b;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Style the "active" element to highlight the current page */
+.topnav a.active {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* Style the search box inside the navigation bar */
+.topnav input[type=text] {
+  float: left;
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  margin-left: 16px;
+  font-size: 17px;
+}
+
+/* Style the Dropdown inside the navigation bar */
+.topnav select {
+  float: left;
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  margin-left: 16px;
+  font-size: 17px;
+}
