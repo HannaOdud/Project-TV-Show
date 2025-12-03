@@ -6,27 +6,32 @@ async function getAllEpisodesFromApi() {
   let episodes = [];
   try {
     const response = await fetch(api_url);
+    if (!response.ok) {
+      alert("Bad response from the server!");
+      return false;
+    }
     const data = await response.json();
     episodes = Array.from(data);
     return episodes;
   } catch (error) {
-    console.log(error);
+    alert("Failed to connect to the server! "); // when error, user should be notified via interface, not in DOM
+    return false;
   }
 }
 
 async function setup() {
   allEpisodes = await getAllEpisodesFromApi();
-  // display all episodes for first time (default)
-  makePageForEpisodes(allEpisodes);
+
+  makePageForEpisodes(allEpisodes); // display all episodes for first time (default)
+  displayEpisodesNumber (allEpisodes, allEpisodes); //number of episodes have to be displayed even if input is empty. 
 
   const searchInput = document.querySelector("#inputSearch");
   const episodesDropDown = document.querySelector("#episodesDropDown");
 
    for (const episode of allEpisodes) {
-    episodesDropDown.innerHTML += `<option value="${episode.id}" >${episode.name}</option>`;
+    const episodeCode = episodeCodeFunc(episode.season, episode.number);
+    episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
   }
-  numberOfEpiFound.innerHTML = `Displaying ${allEpisodes.length}/${allEpisodes.length} Episodes`;//number of episodes have to be displayed even if input is empty. 
-  displayEpisodesNumber (allEpisodes, allEpisodes);
   
   searchInput.addEventListener("input", () => {
     const rootElem = document.getElementById("root");
@@ -44,14 +49,11 @@ async function setup() {
   
   episodesDropDown.addEventListener("change", () => {
     const rootElem = document.getElementById("root");
-    rootElem.innerHTML = "";
-    if (episodesDropDown.value == "all"){
-      makePageForEpisodes(allEpisodes);
-      displayEpisodesNumber (allEpisodes, allEpisodes);
-    }
-    else{
+    if (episodesDropDown.value != "all") { // better to do the condition this way
+      rootElem.innerHTML = "";
       const chosenEpisodeId = Number(episodesDropDown.value);
-      const displayEpisode = allEpisodes.filter( ep => ep.id === chosenEpisodeId);
+      const displayEpisode = allEpisodes.filter( episode => episode.id === chosenEpisodeId);
+      
       makePageForEpisodes(displayEpisode);
       displayEpisodesNumber (displayEpisode, allEpisodes);
     }
@@ -72,7 +74,6 @@ function searchEpisodes(searchInput) {
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  //rootElem.textContent = `Got ${episodeList.length} episode(s)`;
   for (let i = 0; i < episodeList.length; i++){
     const episode = episodeList[i];
     const div = createEpisodeContainer(episode);
@@ -81,13 +82,12 @@ function makePageForEpisodes(episodeList) {
 }
 
 function createEpisodeContainer(episode){
-  //const episode = getOneEpisode();
   const div = document.createElement("div");
   div.classList.add("episodeContainer");
   
   const h2 = document.createElement("h2");
-  const code = "S"+ String(episode.season).padStart(2,"0")+"E"+String(episode.number).padStart(2,"0");
-  h2.textContent = episode.name + " - " + code;
+  const episodeCode = episodeCodeFunc(episode.season, episode.number);
+  h2.textContent = episode.name + " - " + episodeCode;
 
   const img = document.createElement("img");
   img.src = episode.image.medium;
@@ -101,6 +101,10 @@ function createEpisodeContainer(episode){
   div.appendChild(img);
   div.appendChild(p);
   return div;
+}
+
+function episodeCodeFunc(episodeSeason, episodeNumber) {
+  return "S"+ String(episodeSeason).padStart(2,"0")+"E"+String(episodeNumber).padStart(2,"0");
 }
 
 window.onload = setup;
