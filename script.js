@@ -88,7 +88,7 @@ async function setup() {
 
       showNumber = chosenShowId;
       // refresh the content of the episodes dropDown selector
-      episodesDropDown.innerHTML = "";
+      episodesDropDown.innerHTML = `<option value="all">-- SELECT ALL --</option>`;
       for (const episode of displayEpisodesOfShow) {
         const episodeCode = episodeCodeFunc(episode.season, episode.number);
         episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
@@ -101,10 +101,8 @@ async function setup() {
     if (episodesDropDown.value != "all") { // better to do the condition this way
       rootElem.innerHTML = "";
       const displayEpisodesOfShow = await getAllEpisodesFromApi(showNumber);
-      console.log(displayEpisodesOfShow);
       const chosenEpisodeId = Number(episodesDropDown.value);
       const displayEpisode = displayEpisodesOfShow.filter( episode => episode.id === chosenEpisodeId);
-      console.log(chosenEpisodeId);
       
       makePageForEpisodes(displayEpisode);
       displayEpisodesNumber (displayEpisode, allEpisodes);
