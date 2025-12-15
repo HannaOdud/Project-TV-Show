@@ -1,5 +1,24 @@
 //You can edit ALL of the code here
 let allEpisodes = [];
+let allShows    = [];
+
+async function getAllShowsFromApi() {
+  const api_url = `https://api.tvmaze.com/shows`;
+  let shows = [];
+  try {
+    const response = await fetch(api_url);
+    if (!response.ok) {
+      alert("Bad response from the server!");
+      return false;
+    }
+    const data = await response.json();
+    shows = Array.from(data);
+    return shows;
+  } catch (error) {
+    alert("Failed to connect to the server! "); // when error, user should be notified via interface, not in DOM
+    return false;
+  }
+}
 
 async function getAllEpisodesFromApi() {
   const api_url = `https://api.tvmaze.com/shows/82/episodes`;
@@ -20,15 +39,21 @@ async function getAllEpisodesFromApi() {
 }
 
 async function setup() {
-  allEpisodes = await getAllEpisodesFromApi();
+  allEpisodes = await getAllEpisodesFromApi ();
+  allShows    = await getAllShowsFromApi    ();
 
   makePageForEpisodes(allEpisodes); // display all episodes for first time (default)
   displayEpisodesNumber (allEpisodes, allEpisodes); //number of episodes have to be displayed even if input is empty. 
 
   const searchInput = document.querySelector("#inputSearch");
   const episodesDropDown = document.querySelector("#episodesDropDown");
+  const showsDropDown = document.querySelector("#showsDropDown");
 
-   for (const episode of allEpisodes) {
+  for (const show of allShows) {
+    showsDropDown.innerHTML += `<option value="${show.id}" >${show.name}</option>`;
+  }
+  
+  for (const episode of allEpisodes) {
     const episodeCode = episodeCodeFunc(episode.season, episode.number);
     episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
   }
