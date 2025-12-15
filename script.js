@@ -39,7 +39,9 @@ async function getAllEpisodesFromApi(episodeId) {
 }
 
 async function setup() {
-  allEpisodes = await getAllEpisodesFromApi (1);
+  let showNumber = 1; // default number
+
+  allEpisodes = await getAllEpisodesFromApi (showNumber);
   allShows    = await getAllShowsFromApi    ();
 
   allShows = allShows.sort((a, b) => a.name.localeCompare(b.name)); //sort by name A-Z
@@ -59,6 +61,7 @@ async function setup() {
     const episodeCode = episodeCodeFunc(episode.season, episode.number);
     episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
   }
+
   
   searchInput.addEventListener("input", () => {
     const rootElem = document.getElementById("root");
@@ -74,12 +77,34 @@ async function setup() {
     makePageForEpisodes(filteredAllEpisodes);
   });
   
-  episodesDropDown.addEventListener("change", () => {
+   showsDropDown.addEventListener("change", async () => {
+    const rootElem = document.getElementById("root");
+    if (showsDropDown.value != "all") {
+      rootElem.innerHTML = "";
+      const chosenShowId = Number(showsDropDown.value);
+      const displayEpisodesOfShow = await getAllEpisodesFromApi(chosenShowId);
+      makePageForEpisodes(displayEpisodesOfShow);
+      displayEpisodesNumber (displayEpisodesOfShow, displayEpisodesOfShow);
+
+      showNumber = chosenShowId;
+      // refresh the content of the episodes dropDown selector
+      episodesDropDown.innerHTML = "";
+      for (const episode of displayEpisodesOfShow) {
+        const episodeCode = episodeCodeFunc(episode.season, episode.number);
+        episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
+      }
+    }
+  });
+
+  episodesDropDown.addEventListener("change", async () => {
     const rootElem = document.getElementById("root");
     if (episodesDropDown.value != "all") { // better to do the condition this way
       rootElem.innerHTML = "";
+      const displayEpisodesOfShow = await getAllEpisodesFromApi(showNumber);
+      console.log(displayEpisodesOfShow);
       const chosenEpisodeId = Number(episodesDropDown.value);
-      const displayEpisode = allEpisodes.filter( episode => episode.id === chosenEpisodeId);
+      const displayEpisode = displayEpisodesOfShow.filter( episode => episode.id === chosenEpisodeId);
+      console.log(chosenEpisodeId);
       
       makePageForEpisodes(displayEpisode);
       displayEpisodesNumber (displayEpisode, allEpisodes);
