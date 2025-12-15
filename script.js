@@ -1,5 +1,5 @@
 //You can edit ALL of the code here
-let allEpisodes = [];
+let allFetchedEpisodes = {};
 let allShows    = [];
 
 async function getAllShowsFromApi() {
@@ -20,34 +20,37 @@ async function getAllShowsFromApi() {
   }
 }
 
-async function getAllEpisodesFromApi(episodeId) {
-  const api_url = `https://api.tvmaze.com/shows/${episodeId}/episodes`;
+async function getAllEpisodesFromApi(showId) {
+  const api_url = `https://api.tvmaze.com/shows/${showId}/episodes`;
   let episodes = [];
-  try {
+  if ( Object.hasOwn(allFetchedEpisodes, showId)){
+    episodes = allFetchedEpisodes[showId];
+    return episodes;
+  } else {
+    try {
     const response = await fetch(api_url);
     if (!response.ok) {
       alert("Bad response from the server!");
       return false;
     }
-    const data = await response.json();
-    episodes = Array.from(data);
-    return episodes;
-  } catch (error) {
-    alert("Failed to connect to the server! "); // when error, user should be notified via interface, not in DOM
-    return false;
+      const data = await response.json();
+      episodes = Array.from(data);
+      allFetchedEpisodes[showId]= episodes;
+      return episodes;
+    } catch (error) {
+      alert("Failed to connect to the server! "); // when error, user should be notified via interface, not in DOM
+      return false;
+    }
   }
 }
 
 async function setup() {
-  let showNumber = 1; // default number
-
-  allEpisodes = await getAllEpisodesFromApi (showNumber);
-  allShows    = await getAllShowsFromApi    ();
-
+  allShows    = await getAllShowsFromApi();
   allShows = allShows.sort((a, b) => a.name.localeCompare(b.name)); //sort by name A-Z
-
+  let currentShowId = allShows[0].id;
+  let allEpisodes = await getAllEpisodesFromApi(currentShowId);
   makePageForEpisodes(allEpisodes); // display all episodes for first time (default)
-  displayEpisodesNumber (allEpisodes, allEpisodes); //number of episodes have to be displayed even if input is empty. 
+  displayEpisodesNumber(allEpisodes, allEpisodes); //number of episodes have to be displayed even if input is empty. 
 
   const searchInput = document.querySelector("#inputSearch");
   const episodesDropDown = document.querySelector("#episodesDropDown");
@@ -61,15 +64,13 @@ async function setup() {
     const episodeCode = episodeCodeFunc(episode.season, episode.number);
     episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
   }
-
   
   searchInput.addEventListener("input", () => {
     const rootElem = document.getElementById("root");
     rootElem.innerHTML = ""; // remove everything inside div root to put the new content (the search result)
-
     const searchWord = searchInput.value.toLowerCase(); // the user's input
     const filteredAllEpisodes = searchEpisodes(searchWord); // search on the episodes
-    displayEpisodesNumber (filteredAllEpisodes, allEpisodes);
+    displayEpisodesNumber(filteredAllEpisodes, allEpisodes);
     if ( searchWord.length == 0 ){
       displayEpisodesNumber(allEpisodes, allEpisodes);
     }
@@ -84,9 +85,9 @@ async function setup() {
       const chosenShowId = Number(showsDropDown.value);
       const displayEpisodesOfShow = await getAllEpisodesFromApi(chosenShowId);
       makePageForEpisodes(displayEpisodesOfShow);
-      displayEpisodesNumber (displayEpisodesOfShow, displayEpisodesOfShow);
+      displayEpisodesNumber(displayEpisodesOfShow, displayEpisodesOfShow);
 
-      showNumber = chosenShowId;
+      currentShowId = chosenShowId;
       // refresh the content of the episodes dropDown selector
       episodesDropDown.innerHTML = `<option value="all">-- SELECT ALL --</option>`;
       for (const episode of displayEpisodesOfShow) {
@@ -100,12 +101,17 @@ async function setup() {
     const rootElem = document.getElementById("root");
     if (episodesDropDown.value != "all") { // better to do the condition this way
       rootElem.innerHTML = "";
-      const displayEpisodesOfShow = await getAllEpisodesFromApi(showNumber);
+      const displayEpisodesOfShow = await getAllEpisodesFromApi(currentShowId);
       const chosenEpisodeId = Number(episodesDropDown.value);
       const displayEpisode = displayEpisodesOfShow.filter( episode => episode.id === chosenEpisodeId);
       
       makePageForEpisodes(displayEpisode);
       displayEpisodesNumber (displayEpisode, allEpisodes);
+    } else {
+      rootElem.innerHTML = "";
+      allEpisodes = await getAllEpisodesFromApi(currentShowId);
+      makePageForEpisodes(allEpisodes);
+      displayEpisodesNumber (allEpisodes, allEpisodes);
     }
   });
 }
