@@ -42,6 +42,8 @@ async function setup() {
   allEpisodes = await getAllEpisodesFromApi ();
   allShows    = await getAllShowsFromApi    ();
 
+  allShows = allShows.sort((a, b) => a.name.localeCompare(b.name)); //sort by name A-Z
+
   makePageForEpisodes(allEpisodes); // display all episodes for first time (default)
   displayEpisodesNumber (allEpisodes, allEpisodes); //number of episodes have to be displayed even if input is empty. 
 
