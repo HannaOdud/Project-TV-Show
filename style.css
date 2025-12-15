@@ -42,6 +42,7 @@ body, #root {
 .topnav {
   overflow: hidden;
   background-color: #6b6b6b;
+  padding: 6px;
 }
 
 /* Style the links inside the navigation bar */

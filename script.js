@@ -1,32 +1,67 @@
 //You can edit ALL of the code here
 let allEpisodes = [];
+let allShows    = [];
 
-async function getAllEpisodesFromApi() {
-  const api_url = `https://api.tvmaze.com/shows/82/episodes`;
+async function getAllShowsFromApi() {
+  const api_url = `https://api.tvmaze.com/shows`;
+  let shows = [];
+  try {
+    const response = await fetch(api_url);
+    if (!response.ok) {
+      alert("Bad response from the server!");
+      return false;
+    }
+    const data = await response.json();
+    shows = Array.from(data);
+    return shows;
+  } catch (error) {
+    alert("Failed to connect to the server! "); // when error, user should be notified via interface, not in DOM
+    return false;
+  }
+}
+
+async function getAllEpisodesFromApi(episodeId) {
+  const api_url = `https://api.tvmaze.com/shows/${episodeId}/episodes`;
   let episodes = [];
   try {
     const response = await fetch(api_url);
+    if (!response.ok) {
+      alert("Bad response from the server!");
+      return false;
+    }
     const data = await response.json();
     episodes = Array.from(data);
     return episodes;
   } catch (error) {
-    console.log(error);
+    alert("Failed to connect to the server! "); // when error, user should be notified via interface, not in DOM
+    return false;
   }
 }
 
 async function setup() {
-  allEpisodes = await getAllEpisodesFromApi();
-  // display all episodes for first time (default)
-  makePageForEpisodes(allEpisodes);
+  let showNumber = 1; // default number
+
+  allEpisodes = await getAllEpisodesFromApi (showNumber);
+  allShows    = await getAllShowsFromApi    ();
+
+  allShows = allShows.sort((a, b) => a.name.localeCompare(b.name)); //sort by name A-Z
+
+  makePageForEpisodes(allEpisodes); // display all episodes for first time (default)
+  displayEpisodesNumber (allEpisodes, allEpisodes); //number of episodes have to be displayed even if input is empty. 
 
   const searchInput = document.querySelector("#inputSearch");
   const episodesDropDown = document.querySelector("#episodesDropDown");
+  const showsDropDown = document.querySelector("#showsDropDown");
 
-   for (const episode of allEpisodes) {
-    episodesDropDown.innerHTML += `<option value="${episode.id}" >${episode.name}</option>`;
+  for (const show of allShows) {
+    showsDropDown.innerHTML += `<option value="${show.id}" >${show.name}</option>`;
   }
-  numberOfEpiFound.innerHTML = `Displaying ${allEpisodes.length}/${allEpisodes.length} Episodes`;//number of episodes have to be displayed even if input is empty. 
-  displayEpisodesNumber (allEpisodes, allEpisodes);
+  
+  for (const episode of allEpisodes) {
+    const episodeCode = episodeCodeFunc(episode.season, episode.number);
+    episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
+  }
+
   
   searchInput.addEventListener("input", () => {
     const rootElem = document.getElementById("root");
@@ -42,16 +77,33 @@ async function setup() {
     makePageForEpisodes(filteredAllEpisodes);
   });
   
-  episodesDropDown.addEventListener("change", () => {
+   showsDropDown.addEventListener("change", async () => {
     const rootElem = document.getElementById("root");
-    rootElem.innerHTML = "";
-    if (episodesDropDown.value == "all"){
-      makePageForEpisodes(allEpisodes);
-      displayEpisodesNumber (allEpisodes, allEpisodes);
+    if (showsDropDown.value != "all") {
+      rootElem.innerHTML = "";
+      const chosenShowId = Number(showsDropDown.value);
+      const displayEpisodesOfShow = await getAllEpisodesFromApi(chosenShowId);
+      makePageForEpisodes(displayEpisodesOfShow);
+      displayEpisodesNumber (displayEpisodesOfShow, displayEpisodesOfShow);
+
+      showNumber = chosenShowId;
+      // refresh the content of the episodes dropDown selector
+      episodesDropDown.innerHTML = `<option value="all">-- SELECT ALL --</option>`;
+      for (const episode of displayEpisodesOfShow) {
+        const episodeCode = episodeCodeFunc(episode.season, episode.number);
+        episodesDropDown.innerHTML += `<option value="${episode.id}" >${episodeCode} - ${episode.name}</option>`;
+      }
     }
-    else{
+  });
+
+  episodesDropDown.addEventListener("change", async () => {
+    const rootElem = document.getElementById("root");
+    if (episodesDropDown.value != "all") { // better to do the condition this way
+      rootElem.innerHTML = "";
+      const displayEpisodesOfShow = await getAllEpisodesFromApi(showNumber);
       const chosenEpisodeId = Number(episodesDropDown.value);
-      const displayEpisode = allEpisodes.filter( ep => ep.id === chosenEpisodeId);
+      const displayEpisode = displayEpisodesOfShow.filter( episode => episode.id === chosenEpisodeId);
+      
       makePageForEpisodes(displayEpisode);
       displayEpisodesNumber (displayEpisode, allEpisodes);
     }
@@ -72,7 +124,6 @@ function searchEpisodes(searchInput) {
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  //rootElem.textContent = `Got ${episodeList.length} episode(s)`;
   for (let i = 0; i < episodeList.length; i++){
     const episode = episodeList[i];
     const div = createEpisodeContainer(episode);
@@ -81,13 +132,12 @@ function makePageForEpisodes(episodeList) {
 }
 
 function createEpisodeContainer(episode){
-  //const episode = getOneEpisode();
   const div = document.createElement("div");
   div.classList.add("episodeContainer");
   
   const h2 = document.createElement("h2");
-  const code = "S"+ String(episode.season).padStart(2,"0")+"E"+String(episode.number).padStart(2,"0");
-  h2.textContent = episode.name + " - " + code;
+  const episodeCode = episodeCodeFunc(episode.season, episode.number);
+  h2.textContent = episode.name + " - " + episodeCode;
 
   const img = document.createElement("img");
   img.src = episode.image.medium;
@@ -101,6 +151,10 @@ function createEpisodeContainer(episode){
   div.appendChild(img);
   div.appendChild(p);
   return div;
+}
+
+function episodeCodeFunc(episodeSeason, episodeNumber) {
+  return "S"+ String(episodeSeason).padStart(2,"0")+"E"+String(episodeNumber).padStart(2,"0");
 }
 
 window.onload = setup;
