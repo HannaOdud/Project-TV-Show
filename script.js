@@ -20,8 +20,8 @@ async function getAllShowsFromApi() {
   }
 }
 
-async function getAllEpisodesFromApi() {
-  const api_url = `https://api.tvmaze.com/shows/82/episodes`;
+async function getAllEpisodesFromApi(episodeId) {
+  const api_url = `https://api.tvmaze.com/shows/${episodeId}/episodes`;
   let episodes = [];
   try {
     const response = await fetch(api_url);
@@ -39,7 +39,7 @@ async function getAllEpisodesFromApi() {
 }
 
 async function setup() {
-  allEpisodes = await getAllEpisodesFromApi ();
+  allEpisodes = await getAllEpisodesFromApi (1);
   allShows    = await getAllShowsFromApi    ();
 
   allShows = allShows.sort((a, b) => a.name.localeCompare(b.name)); //sort by name A-Z
