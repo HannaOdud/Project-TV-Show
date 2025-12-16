@@ -9,15 +9,23 @@
   </head>
   <body>
     
+    <div id="sowsListingNav">
+      <input id="inputShowSearch" type="text" placeholder="Search shows..">
+      <select id="showsListingDropDown"></select>
+      <p id="numberOfShoFound"></p>
+    </div>
     <div class="topnav">
+      <button id="backToShowsListing">Back to Shows</button>
       <select id="showsDropDown"></select>
       <select id="episodesDropDown">
         <option value="all">-- SELECT ALL --</option>
       </select>
-      <input id="inputSearch" type="text" placeholder="Search..">
+      <input id="inputSearch" type="text" placeholder="Search.. episodes">
+      <p id="numberOfEpiFound"></p>
     </div>
-    <p id="numberOfEpiFound"></p>
     <div id="root">
+    </div>
+    <div id="showRoot">
     </div>
 
     <!-- Loads YOUR javascript code -->

@@ -39,14 +39,15 @@ body, #root {
 }
 
 /* for the search bar */
-.topnav {
-  overflow: hidden;
+.topnav, #sowsListingNav {
+  display: flex;
   background-color: #6b6b6b;
   padding: 6px;
+  align-items: center;
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
+.topnav a, #sowsListingNav a {
   float: left;
   display: block;
   color: black;
@@ -56,14 +57,20 @@ body, #root {
   font-size: 17px;
 }
 
+.topnav p, #sowsListingNav p {
+  text-align: center;
+  margin: 0 15px;
+  align-content: center;
+}
+
 /* Style the "active" element to highlight the current page */
-.topnav a.active {
+.topnav a.active, #sowsListingNav a.active{
   background-color: #2196F3;
   color: white;
 }
 
 /* Style the search box inside the navigation bar */
-.topnav input[type=text] {
+.topnav input[type=text], #sowsListingNav input[type=text] {
   float: left;
   padding: 6px;
   border: none;
@@ -73,11 +80,49 @@ body, #root {
 }
 
 /* Style the Dropdown inside the navigation bar */
-.topnav select {
+.topnav select, #sowsListingNav select {
   float: left;
   padding: 6px;
   border: none;
   margin-top: 8px;
   margin-left: 16px;
   font-size: 17px;
+}
+
+
+#showsDropDown, #episodesDropDown, #inputSearch, #backToShowsListing, #numberOfEpiFound {
+  display: none;
+}
+
+#backToShowsListing {
+      padding: 6px;
+    border: none;
+    margin-top: 8px;
+    margin-left: 16px;
+    font-size: 17px;
+}
+
+.showContainer{
+  margin: 5px 10px;
+}
+
+.showContainer h2 {
+  margin: 10px 15px;
+}
+
+.showContent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.showContent img, .showContent .showSummary, .showContent .showTable {
+  margin: 5px;
+  width: 30%;
+}
+
+.showContent .showTable {
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 15px;
 }
